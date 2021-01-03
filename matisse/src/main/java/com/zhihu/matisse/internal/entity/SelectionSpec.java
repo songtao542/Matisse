@@ -16,6 +16,7 @@
  */
 package com.zhihu.matisse.internal.entity;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 
 import androidx.annotation.StyleRes;
@@ -57,6 +58,14 @@ public final class SelectionSpec {
     public int originalMaxSize;
     public OnCheckedListener onCheckedListener;
     public boolean showPreview;
+
+    // add by songtao --start--
+    public boolean crop;
+    public float aspectRatioX;
+    public float aspectRatioY;
+    public int maxWidth;
+    public int maxHeight;
+    // add by songtao --end--
 
     private SelectionSpec() {
     }
@@ -118,4 +127,13 @@ public final class SelectionSpec {
     private static final class InstanceHolder {
         private static final SelectionSpec INSTANCE = new SelectionSpec();
     }
+
+    // add by songtao --start--
+    public CaptureStrategy getCaptureStrategy(Context context) {
+        if (captureStrategy == null) {
+            captureStrategy = new CaptureStrategy(false, context.getPackageName());
+        }
+        return captureStrategy;
+    }
+    // add by songtao --end--
 }

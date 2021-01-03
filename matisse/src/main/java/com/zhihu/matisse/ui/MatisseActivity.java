@@ -15,29 +15,40 @@
  */
 package com.zhihu.matisse.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
@@ -54,11 +65,13 @@ import com.zhihu.matisse.internal.ui.adapter.AlbumsAdapter;
 import com.zhihu.matisse.internal.ui.widget.AlbumsSpinner;
 import com.zhihu.matisse.internal.ui.widget.CheckRadioView;
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog;
+import com.zhihu.matisse.internal.utils.Cropper;
 import com.zhihu.matisse.internal.utils.MediaStoreCompat;
 import com.zhihu.matisse.internal.utils.PathUtils;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+
 import java.util.ArrayList;
 
 /**
@@ -76,9 +89,14 @@ public class MatisseActivity extends AppCompatActivity implements
     public static final String EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable";
     private static final int REQUEST_CODE_PREVIEW = 23;
     private static final int REQUEST_CODE_CAPTURE = 24;
+
     public static final String CHECK_STATE = "checkState";
     private final AlbumCollection mAlbumCollection = new AlbumCollection();
     private MediaStoreCompat mMediaStoreCompat;
+    // add by songtao --start--
+    private Cropper mCropper;
+    private static final int REQUEST_CODE_CROP = Cropper.REQUEST_CODE;
+    // add by songtao --end--
     private SelectedItemCollection mSelectedCollection = new SelectedItemCollection(this);
     private SelectionSpec mSpec;
 
@@ -112,11 +130,31 @@ public class MatisseActivity extends AppCompatActivity implements
 
         if (mSpec.capture) {
             mMediaStoreCompat = new MediaStoreCompat(this);
-            if (mSpec.captureStrategy == null)
-                throw new RuntimeException("Don't forget to set CaptureStrategy.");
-            mMediaStoreCompat.setCaptureStrategy(mSpec.captureStrategy);
+            // delete by songtao --start--
+            //if (mSpec.captureStrategy == null)
+            //    throw new RuntimeException("Don't forget to set CaptureStrategy.");
+            // delete by songtao --end--
+
+            // modify by songtao --start--
+            //mMediaStoreCompat.setCaptureStrategy(mSpec.captureStrategy);
+            mMediaStoreCompat.setCaptureStrategy(mSpec.getCaptureStrategy(this));
+            // modify by songtao --end--
         }
 
+        // add by songtao --start--
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final Window window = getWindow();
+            if (window != null) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(typedValue.data);
+            }
+        }
+        if (mSpec.crop) {
+            mCropper = new Cropper(this, mSpec);
+        }
+        // add by songtao --end--
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -144,16 +182,95 @@ public class MatisseActivity extends AppCompatActivity implements
         }
         updateBottomToolbar();
 
+        // modify by songtao --start--
+        if (checkPermission()) {
+            initAlbum(savedInstanceState);
+        } else {
+            String[] permissions = new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+            ActivityCompat.requestPermissions(this, permissions, 123);
+        }
+        // extract to initAlbum() method
+        //mAlbumsAdapter = new AlbumsAdapter(this, null, false);
+        //mAlbumsSpinner = new AlbumsSpinner(this);
+        //mAlbumsSpinner.setOnItemSelectedListener(this);
+        //mAlbumsSpinner.setSelectedTextView((TextView) findViewById(R.id.selected_album));
+        //mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
+        //mAlbumsSpinner.setAdapter(mAlbumsAdapter);
+        //mAlbumCollection.onCreate(this, this);
+        //mAlbumCollection.onRestoreInstanceState(savedInstanceState);
+        //mAlbumCollection.loadAlbums();
+        // modify by songtao --end--
+    }
+
+    // add by songtao --start--
+    private void initAlbum(Bundle savedInstanceState) {
         mAlbumsAdapter = new AlbumsAdapter(this, null, false);
         mAlbumsSpinner = new AlbumsSpinner(this);
         mAlbumsSpinner.setOnItemSelectedListener(this);
         mAlbumsSpinner.setSelectedTextView((TextView) findViewById(R.id.selected_album));
+        // add by songtao --start--
+        mAlbumsSpinner.setDimView(findViewById(R.id.dim_view));
+        // add by songtao --end--
         mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
         mAlbumsSpinner.setAdapter(mAlbumsAdapter);
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean requestStorage = false;
+        boolean requestCamera = false;
+        for (String permission : permissions) {
+            if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                requestStorage = true;
+                break;
+            } else if (permission.equals(Manifest.permission.CAMERA)) {
+                requestCamera = true;
+                break;
+            }
+        }
+        if (requestStorage) {
+            if (checkPermission()) {
+                initAlbum(null);
+            } else {
+                Toast.makeText(this.getApplicationContext(), getString(R.string.read_external_storage_permission_denial), Toast.LENGTH_LONG).show();
+                finish();
+            }
+        } else if (requestCamera) {
+            if (checkCameraPermission()) {
+                startCapture();
+            }
+        }
+    }
+
+    private boolean checkPermission() {
+        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
+            return false;
+        }
+        return true;
+    }
+
+    private void requestCameraPermission() {
+        String[] permissions = new String[]{
+                Manifest.permission.CAMERA
+        };
+        ActivityCompat.requestPermissions(this, permissions, 123);
+    }
+
+    private boolean checkCameraPermission() {
+        String permission = Manifest.permission.CAMERA;
+        if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(this, permission)) {
+            return false;
+        }
+        return true;
+    }
+    // add by songtao --end--
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -226,6 +343,31 @@ public class MatisseActivity extends AppCompatActivity implements
             // Just pass the data back to previous calling Activity.
             Uri contentUri = mMediaStoreCompat.getCurrentPhotoUri();
             String path = mMediaStoreCompat.getCurrentPhotoPath();
+            // add by songtao --start--
+            if (mSpec.singleSelectionModeEnabled() && mSpec.crop) {
+                mCropper.crop(contentUri);
+            } else {
+                // add by songtao --end--
+                ArrayList<Uri> selected = new ArrayList<>();
+                selected.add(contentUri);
+                ArrayList<String> selectedPath = new ArrayList<>();
+                selectedPath.add(path);
+                Intent result = new Intent();
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected);
+                result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath);
+                setResult(RESULT_OK, result);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                    MatisseActivity.this.revokeUriPermission(contentUri,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                new SingleMediaScanner(this.getApplicationContext(), path, () -> Log.i("SingleMediaScanner", "scan finish!"));
+                finish();
+            }
+        }
+        // add by songtao --start--
+        else if (requestCode == REQUEST_CODE_CROP) {
+            Uri contentUri = mCropper.getCurrentPhotoUri();
+            String path = mCropper.getCurrentPhotoPath();
             ArrayList<Uri> selected = new ArrayList<>();
             selected.add(contentUri);
             ArrayList<String> selectedPath = new ArrayList<>();
@@ -233,19 +375,26 @@ public class MatisseActivity extends AppCompatActivity implements
             Intent result = new Intent();
             result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected);
             result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath);
+
+            Log.d("Matisse", "onCropSuccess path=" + path + "   contentUri=" + contentUri);
+            updateMediaStore(path);
+
             setResult(RESULT_OK, result);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                MatisseActivity.this.revokeUriPermission(contentUri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            new SingleMediaScanner(this.getApplicationContext(), path, new SingleMediaScanner.ScanListener() {
-                @Override public void onScanFinish() {
-                    Log.i("SingleMediaScanner", "scan finish!");
-                }
-            });
+                MatisseActivity.this.revokeUriPermission(contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
             finish();
+            // add by songtao --end--
         }
     }
+
+    // add by songtao --start--
+    private void updateMediaStore(String filePath) {
+        new SingleMediaScanner(this.getApplicationContext(), filePath, () -> Log.i("SingleMediaScanner", "scan finish!"));
+        /*MediaScannerConnection.scanFile(this, new String[]{filePath}, null, (path, uri) -> {
+            Log.d("Matisse", "updateMediaStore path=" + path + "   uri=" + uri);
+        });*/
+    }
+    // add by songtao --end--
 
     private void updateBottomToolbar() {
 
@@ -274,7 +423,6 @@ public class MatisseActivity extends AppCompatActivity implements
 
 
     }
-
 
     private void updateOriginalState() {
         mOriginal.setChecked(mOriginalEnable);
@@ -414,12 +562,29 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
-        Intent intent = new Intent(this, AlbumPreviewActivity.class);
-        intent.putExtra(AlbumPreviewActivity.EXTRA_ALBUM, album);
-        intent.putExtra(AlbumPreviewActivity.EXTRA_ITEM, item);
-        intent.putExtra(BasePreviewActivity.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle());
-        intent.putExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
-        startActivityForResult(intent, REQUEST_CODE_PREVIEW);
+        // add by songtao --start--
+        if (mSpec.singleSelectionModeEnabled() && mSpec.crop) {
+            mCropper.crop(item.getContentUri());
+        } else if (mSpec.singleSelectionModeEnabled()) {
+            Intent result = new Intent();
+            ArrayList<Uri> selectedUris = new ArrayList<>();
+            selectedUris.add(item.getContentUri());
+            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
+            ArrayList<String> selectedPaths = new ArrayList<>();
+            selectedPaths.add(PathUtils.getPath(this, item.getContentUri()));
+            result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
+            result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
+            setResult(RESULT_OK, result);
+            finish();
+        } else {
+            // add by songtao --end--
+            Intent intent = new Intent(this, AlbumPreviewActivity.class);
+            intent.putExtra(AlbumPreviewActivity.EXTRA_ALBUM, album);
+            intent.putExtra(AlbumPreviewActivity.EXTRA_ITEM, item);
+            intent.putExtra(BasePreviewActivity.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle());
+            intent.putExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
+            startActivityForResult(intent, REQUEST_CODE_PREVIEW);
+        }
     }
 
     @Override
@@ -429,9 +594,24 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     public void capture() {
+        // modify by songtao --start--
+        if (checkCameraPermission()) {
+            // extract to startCapture() method
+            //if (mMediaStoreCompat != null) {
+            //    mMediaStoreCompat.dispatchCaptureIntent(this, REQUEST_CODE_CAPTURE);
+            //}
+            startCapture();
+        } else {
+            requestCameraPermission();
+        }
+        // modify by songtao --end--
+    }
+
+    // add by songtao --start--
+    private void startCapture() {
         if (mMediaStoreCompat != null) {
             mMediaStoreCompat.dispatchCaptureIntent(this, REQUEST_CODE_CAPTURE);
         }
     }
-
+    // add by songtao --end--
 }

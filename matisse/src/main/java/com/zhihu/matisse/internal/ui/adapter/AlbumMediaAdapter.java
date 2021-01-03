@@ -20,8 +20,10 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +52,9 @@ public class AlbumMediaAdapter extends
     private OnMediaClickListener mOnMediaClickListener;
     private RecyclerView mRecyclerView;
     private int mImageResize;
+    // add by songtao --start--
+    private boolean mSingleMode;
+    // add by songtao --end--
 
     public AlbumMediaAdapter(Context context, SelectedItemCollection selectedCollection, RecyclerView recyclerView) {
         super(null);
@@ -61,6 +66,9 @@ public class AlbumMediaAdapter extends
         ta.recycle();
 
         mRecyclerView = recyclerView;
+        // add by songtao --start--
+        mSingleMode = mSelectionSpec.singleSelectionModeEnabled();
+        // add by songtao --end--
     }
 
     @Override
@@ -119,6 +127,9 @@ public class AlbumMediaAdapter extends
                     mSelectionSpec.countable,
                     holder
             ));
+            // add by songtao --start--
+            mediaViewHolder.mMediaGrid.showCheckView(!mSingleMode);
+            // add by songtao --end--
             mediaViewHolder.mMediaGrid.bindMedia(item);
             mediaViewHolder.mMediaGrid.setOnMediaGridClickListener(this);
             setCheckStatus(item, mediaViewHolder.mMediaGrid);

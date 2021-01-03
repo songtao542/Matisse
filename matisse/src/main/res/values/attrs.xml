@@ -33,4 +33,8 @@
     <attr name="item.checkCircle.backgroundColor" format="reference|color"/>
     <attr name="item.checkCircle.borderColor" format="reference|color"/>
     <attr name="capture.textColor" format="reference|color"/>
+    <!-- add by songtao start -->
+    <attr name="listPopupWindowBackground" format="reference" />
+    <attr name="listPopupWindowAnimationStyle" format="reference" />
+    <!-- add by songtao end -->
 </resources>

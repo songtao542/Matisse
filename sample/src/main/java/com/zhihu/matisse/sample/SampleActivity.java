@@ -55,6 +55,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.zhihu).setOnClickListener(this);
         findViewById(R.id.dracula).setOnClickListener(this);
         findViewById(R.id.only_gif).setOnClickListener(this);
+        findViewById(R.id.crop).setOnClickListener(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,8 +86,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .choose(MimeType.ofImage(), false)
                         .countable(true)
                         .capture(true)
-                        .captureStrategy(
-                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"))
+                        //.captureStrategy(new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
@@ -114,6 +114,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .maxSelectable(9)
                         .originalEnable(true)
+                        //.captureStrategy(new CaptureStrategy(false, "com.zhihu.matisse.sample.fileprovider"))
                         .maxOriginalSize(10)
                         .imageEngine(new PicassoEngine())
                         .forResult(REQUEST_CODE_CHOOSE);
@@ -124,8 +125,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .countable(true)
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                        .gridExpectedSize(
-                                getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .thumbnailScale(0.85f)
                         .imageEngine(new GlideEngine())
@@ -135,6 +135,25 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .autoHideToolbarOnSingleTap(true)
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
+            // add by songtao --start--
+            case R.id.crop:
+                //val picker = matisse.choose(MimeType.ofImage())
+                Matisse.from(this).choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
+                        .showSingleMediaType(true)
+                        .theme(R.style.Matisse_Dracula)
+                        .countable(false) //max == 1，则 countable = false
+                        .addFilter(new GifSizeFilter(200, 200, 5 * Filter.K * Filter.K))
+                        .maxSelectable(1)
+                        .spanCount(4)
+                        .originalEnable(true)
+                        .maxOriginalSize(10)
+                        .capture(true)
+                        //.captureStrategy(new CaptureStrategy(false, "com.zhihu.matisse.sample.fileprovider"))
+                        .imageEngine(new GlideEngine())
+                        .crop(1f, 1f)
+                        .forResult(1234);
+                break;
+            // add by songtao --end--
             default:
                 break;
         }
@@ -148,6 +167,15 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
+        // add by songtao --start--
+        else if (requestCode == 1234 && resultCode == RESULT_OK) {
+            List<Uri> uris = Matisse.obtainResult(data);
+            for (Uri uri : uris) {
+                Log.d("TTTT", "uri: " + uri);
+            }
+            mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
+        }
+        // add by songtao --end--
     }
 
     private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {

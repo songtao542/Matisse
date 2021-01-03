@@ -77,6 +77,16 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mPreBindInfo = info;
     }
 
+    // add by songtao --start--
+    public void showCheckView(boolean showCheckView) {
+        if (showCheckView) {
+            mCheckView.setVisibility(View.VISIBLE);
+        } else {
+            mCheckView.setVisibility(View.GONE);
+        }
+    }
+	// add by songtao --end--
+
     public void bindMedia(Item item) {
         mMedia = item;
         setGifTag();

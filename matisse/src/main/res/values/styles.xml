@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +36,13 @@
         <item name="bottomToolbar.apply.textColor">@color/zhihu_bottom_toolbar_apply</item>
         <item name="preview.bottomToolbar.back.textColor">@color/zhihu_preview_bottom_toolbar_back_text</item>
         <item name="preview.bottomToolbar.apply.textColor">@color/zhihu_preview_bottom_toolbar_apply</item>
+        <item name="android:listPopupWindowStyle">@style/Popup.Zhihu</item>
         <item name="listPopupWindowStyle">@style/Popup.Zhihu</item>
         <item name="capture.textColor">@color/zhihu_capture</item>
+        <!-- add by songtao start -->
+        <item name="listPopupWindowBackground">@color/zhihu_album_popup_bg</item>
+        <item name="listPopupWindowAnimationStyle">@style/PopupWindowAnimation</item>
+        <!-- add by songtao end -->
     </style>
 
     <style name="Toolbar.Zhihu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -73,6 +77,10 @@
         <item name="android:listPopupWindowStyle">@style/Popup.Dracula</item>
         <item name="listPopupWindowStyle">@style/Popup.Dracula</item>
         <item name="capture.textColor">@color/dracula_capture</item>
+        <!-- add by songtao start -->
+        <item name="listPopupWindowBackground">@color/dracula_album_popup_bg</item>
+        <item name="listPopupWindowAnimationStyle">@style/PopupWindowAnimation</item>
+        <!-- add by songtao end -->
     </style>
 
     <style name="Toolbar.Dracula" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -83,4 +91,11 @@
         <item name="android:popupBackground">@color/dracula_album_popup_bg</item>
     </style>
 
+    <!-- add by songtao start -->
+    <style name="PopupWindowAnimation">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowExitAnimation">@anim/dropdown_out</item>
+        <item name="android:windowEnterAnimation">@anim/dropdown_in</item>
+    </style>
+    <!-- add by songtao end -->
 </resources>

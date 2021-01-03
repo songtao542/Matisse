@@ -15,13 +15,19 @@
  */
 package com.zhihu.matisse.internal.ui.widget;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ListPopupWindow;
+
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -38,25 +44,65 @@ public class AlbumsSpinner {
     private TextView mSelected;
     private ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
+    // modify by songtao --start--
+    private View mDimView;
+    private int mLastSelectPosition = -1;
+    // modify by songtao --end--
 
     public AlbumsSpinner(@NonNull Context context) {
-        mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
+        // modify by songtao --start--
+        //mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
+        mListPopupWindow = new ListPopupWindow(context, null, 0);
+
+        TypedValue animation = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.listPopupWindowAnimationStyle, animation, true);
+        mListPopupWindow.setAnimationStyle(animation.data);
+
+        TypedValue background = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.listPopupWindowBackground, background, true);
+        mListPopupWindow.setBackgroundDrawable(new ColorDrawable(background.data));
+        // modify by songtao --end--
+
         mListPopupWindow.setModal(true);
-        float density = context.getResources().getDisplayMetrics().density;
-        mListPopupWindow.setContentWidth((int) (216 * density));
-        mListPopupWindow.setHorizontalOffset((int) (16 * density));
-        mListPopupWindow.setVerticalOffset((int) (-48 * density));
+
+        // modify by songtao --start--
+        float width = context.getResources().getDisplayMetrics().widthPixels;
+        mListPopupWindow.setContentWidth((int) width);
+        //float density = context.getResources().getDisplayMetrics().density;
+        //mListPopupWindow.setContentWidth((int) (216 * density));
+        //mListPopupWindow.setHorizontalOffset((int) (16 * density));
+        //mListPopupWindow.setVerticalOffset((int) (-48 * density));
+        // modify by songtao --end--
 
         mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
-                if (mOnItemSelectedListener != null) {
+                // modify by songtao --start--
+                boolean valid = AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
+                if (valid && mOnItemSelectedListener != null) {
                     mOnItemSelectedListener.onItemSelected(parent, view, position, id);
                 }
+                //AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
+                //if (mOnItemSelectedListener != null) {
+                //    mOnItemSelectedListener.onItemSelected(parent, view, position, id);
+                //}
+                // modify by songtao --end--
             }
         });
+
+        // add by songtao --start--
+        mListPopupWindow.setOnDismissListener(() -> {
+            if (mDimView != null) {
+                mDimView.animate().alpha(0).setDuration(220).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation1) {
+                        mDimView.setVisibility(View.GONE);
+                    }
+                }).start();
+            }
+        });
+        // add by songtao --end--
     }
 
     public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
@@ -68,8 +114,14 @@ public class AlbumsSpinner {
         onItemSelected(context, position);
     }
 
-    private void onItemSelected(Context context, int position) {
+    private boolean/*void*/ onItemSelected(Context context, int position) {
         mListPopupWindow.dismiss();
+        // add by songtao --start--
+        if (mLastSelectPosition == position) {
+            return false;
+        }
+        // add by songtao --end--
+        mLastSelectPosition = position;
         Cursor cursor = mAdapter.getCursor();
         cursor.moveToPosition(position);
         Album album = Album.valueOf(cursor);
@@ -89,11 +141,18 @@ public class AlbumsSpinner {
             }
 
         }
+        // add by songtao --start--
+        return true;
+        // add by songtao --end--
     }
 
     public void setAdapter(CursorAdapter adapter) {
         mListPopupWindow.setAdapter(adapter);
         mAdapter = adapter;
+    }
+
+    public void setDimView(View view) {
+        mDimView = view;
     }
 
     public void setSelectedTextView(TextView textView) {
@@ -116,6 +175,12 @@ public class AlbumsSpinner {
                 mListPopupWindow.setHeight(
                         mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
                                 : itemHeight * mAdapter.getCount());
+                // add by songtao --start--
+                if (mDimView != null) {
+                    mDimView.setVisibility(View.VISIBLE);
+                    mDimView.animate().alpha(0.6f).setDuration(220).setListener(null).start();
+                }
+                // add by songtao --end--
                 mListPopupWindow.show();
             }
         });

@@ -19,4 +19,8 @@
     <color name="preview_bottom_toolbar_bg">#CC000000</color>
     <color name="preview_bottom_size">#61FFFFFF</color>
 
+    <!-- add by songtao start -->
+    <color name="dim_bg_color">#000000</color>
+    <!-- add by songtao end -->
+
 </resources>

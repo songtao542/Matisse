@@ -1,0 +1,2 @@
+/Users/songtao/src/AndroidStudioProject/Matisse/matisse/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/songtao/src/AndroidStudioProject/Matisse/matisse/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/rebuild_cache.dir
