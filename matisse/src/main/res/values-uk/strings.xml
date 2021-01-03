@@ -37,4 +37,5 @@
     <string name="error_file_type">Непідтримуваний тип файла</string>
     <string name="error_type_conflict">Неможливо обрати зображення і відео одночасно</string>
     <string name="error_no_video_activity">Застосунок для перегляду відео не знайдений</string>
+    <string name="error_gif">Висота та ширина зображення повинна становити мінімум %1$dpx, а розмір файлу не повинен перевищувати %2$sM</string>
 </resources>

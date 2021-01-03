@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="album_name_all">All Media</string>
 
     <string name="button_preview">Preview</string>
@@ -30,12 +27,12 @@
     <string name="error_over_count_default">You have reached max selectable</string>
     <!-- <string name="error_over_count">You can only select up to %1$d media files</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="zero">You can only select up to %1$d media files</item>
-      <item quantity="one">You can only select up to %1$d media files</item>
-      <item quantity="two">You can only select up to %1$d media files</item>
-      <item quantity="few">You can only select up to %1$d media files</item>
-      <item quantity="many">You can only select up to %1$d media files</item>
-      <item quantity="other">You can only select up to %1$d media files</item>
+        <item quantity="zero">You can only select up to %1$d media files</item>
+        <item quantity="one">You can only select up to %1$d media files</item>
+        <item quantity="two">You can only select up to %1$d media files</item>
+        <item quantity="few">You can only select up to %1$d media files</item>
+        <item quantity="many">You can only select up to %1$d media files</item>
+        <item quantity="other">You can only select up to %1$d media files</item>
     </plurals>
     <string name="error_under_quality">Under quality</string>
     <string name="error_over_quality">Over quality</string>
@@ -47,5 +44,6 @@
     <string name="button_original">Original</string>
     <string name="button_sure_default">Sure</string>
     <string name="button_sure">Sure(%1$d)</string>
-<string name="read_external_storage_permission_denial" tools:ignore="MissingTranslation">Can not read external storage!</string>
+    <string name="read_external_storage_permission_denial" tools:ignore="MissingTranslation">Can not read external storage!</string>
+    <string name="error_gif">x or y bound size should be at least %1$dpx and file size should be no more than %2$sM</string>
 </resources>

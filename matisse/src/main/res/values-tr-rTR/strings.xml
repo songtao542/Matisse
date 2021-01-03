@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +27,13 @@
     <string name="error_over_count_default">Maksimum seçilebilir değere ulaştınız</string>
     <!-- <string name="error_over_count">Sadece %1$d medya dosyasını seçebilirsiniz</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="one">Sadece %1$d medya dosyasını seçebilirsiniz</item>
-      <item quantity="other">Sadece %1$d medya dosyasını seçebilirsiniz</item>
+        <item quantity="one">Sadece %1$d medya dosyasını seçebilirsiniz</item>
+        <item quantity="other">Sadece %1$d medya dosyasını seçebilirsiniz</item>
     </plurals>
     <string name="error_under_quality">Düşük kalite</string>
     <string name="error_over_quality">Yüksek kalite</string>
     <string name="error_file_type">Desteklenmeyen dosya tipi</string>
     <string name="error_type_conflict">Görüntüleri ve videoları aynı anda seçemezsiniz</string>
     <string name="error_no_video_activity">Video önizlemesini destekleyen hiçbir uygulama bulunamadı</string>
+    <string name="error_gif">x veya y\'ye bağlı boyut en az %1$ dpx olmalıdır Dosya boyutu %2$sM \'den daha fazla olmamalıdır</string>
 </resources>

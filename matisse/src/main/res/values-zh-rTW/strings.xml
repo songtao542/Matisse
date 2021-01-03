@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +27,7 @@
     <string name="error_over_count_default">您已經達到最大選擇數量</string>
     <!-- <string name="error_over_count">最多只能選擇 %1$d 個文件</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="other">最多只能選擇 %1$d 個文件</item>
+        <item quantity="other">最多只能選擇 %1$d 個文件</item>
     </plurals>
     <string name="error_under_quality">圖片質量太低</string>
     <string name="error_over_quality">圖片質量太高</string>
@@ -38,4 +37,5 @@
     <string name="button_original">原圖</string>
     <string name="button_sure_default">确定</string>
     <string name="button_sure">确定(%1$d)</string>
+    <string name="error_gif">長寬不小于 %1$dpx，且大小不超過 %2$sM。</string>
 </resources>

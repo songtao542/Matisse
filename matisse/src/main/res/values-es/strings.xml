@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +27,13 @@
     <string name="error_over_count_default">Has alcanzado el máximo de archivos seleccionables</string>
     <!-- <string name="error_over_count">Sólo puede seleccionar hasta %1$d archivos multimedia</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="one">Sólo puede seleccionar hasta %1$d archivos multimedia</item>
-      <item quantity="other">Sólo puede seleccionar hasta %1$d archivos multimedia</item>
+        <item quantity="one">Sólo puede seleccionar hasta %1$d archivos multimedia</item>
+        <item quantity="other">Sólo puede seleccionar hasta %1$d archivos multimedia</item>
     </plurals>
     <string name="error_under_quality">Baja calidad</string>
     <string name="error_over_quality">Exceso calidad</string>
     <string name="error_file_type">Tipo de fichero no soportado</string>
     <string name="error_type_conflict">No se puede seleccionar imágenes y vídeos al mismo tiempo</string>
     <string name="error_no_video_activity">No se ha encontrado ninguna app que soporte la previsualización de vídeo</string>
+    <string name="error_gif">x or y debe ser al menos %1$dpx y el tamaño del archivo no debe ser mayor que %2$sM</string>
 </resources>

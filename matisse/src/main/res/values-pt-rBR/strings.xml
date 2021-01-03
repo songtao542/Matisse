@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +27,13 @@
     <string name="error_over_count_default">Você atingiu o máximo de itens possíveis para seleção</string>
     <!-- <string name="error_over_count">Você só pode selecionar até %1$d arquivos de mídia</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="one">Você só pode selecionar até %1$d arquivos de mídia</item>
-      <item quantity="other">Você só pode selecionar até %1$d arquivos de mídia</item>
+        <item quantity="one">Você só pode selecionar até %1$d arquivos de mídia</item>
+        <item quantity="other">Você só pode selecionar até %1$d arquivos de mídia</item>
     </plurals>
     <string name="error_under_quality">Abaixo da qualidade</string>
     <string name="error_over_quality">Acima da qualidade</string>
     <string name="error_file_type">Tipo de arquivo não suportado</string>
     <string name="error_type_conflict">Não é possível selecionar arquivos de imagem e vídeo simultaneamente</string>
     <string name="error_no_video_activity">Nenhum player de vídeo disponível para reprodução</string>
+    <string name="error_gif">o limite do tamanho de x ou y deve ser de pelo menos %1$dpx e o tamanho do arquivo não deve ser maior que %2$sM</string>
 </resources>

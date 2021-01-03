@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +27,13 @@
     <string name="error_over_count_default">Hai selezionato il numero massimo di elementi</string>
     <!-- <string name="error_over_count">Puoi selezionare fino a %1$d elementi</string> -->
     <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
-      <item quantity="one">Puoi selezionare fino a %1$d elementi</item>
-      <item quantity="other">Puoi selezionare fino a %1$d elementi</item>
+        <item quantity="one">Puoi selezionare fino a %1$d elementi</item>
+        <item quantity="other">Puoi selezionare fino a %1$d elementi</item>
     </plurals>
     <string name="error_under_quality">Sotto qualità</string>
     <string name="error_over_quality">Sopra qualità</string>
     <string name="error_file_type">Tipo di file non supportato</string>
     <string name="error_type_conflict">Non è possibile selezionare contemporaneamente immagini e video</string>
     <string name="error_no_video_activity">Non è stata trovata alcuna app che supporti l\'anteprima video</string>
+    <string name="error_gif">Le dimensioni orizzontali o verticali devono essere di almeno %1$dpx e la dimensione del file non deve superare %2$sM</string>
 </resources>
