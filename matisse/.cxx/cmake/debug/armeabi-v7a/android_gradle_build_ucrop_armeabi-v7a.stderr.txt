@@ -1,1 +1,0 @@
-ninja: error: 'libjpeg-NOTFOUND', needed by '../../../../src/main/jniLibs/armeabi-v7a/libucrop.so', missing and no known rule to make it

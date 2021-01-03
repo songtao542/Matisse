@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <string name="album_name_all">전체보기</string>
   <string name="button_preview">미리보기</string>
   <string name="photo_grid_capture">카메라</string>
@@ -11,7 +11,10 @@
   <string name="empty_text">미디어 파일이 없습니다.</string>
   <string name="button_ok">확인</string>
   <string name="error_over_count_default">더이상 선택할 수 없습니다.</string>
-  <string name="error_over_count">최대 %1$d까지 선택 가능합니다.</string>
+  <!-- <string name="error_over_count">최대 %1$d까지 선택 가능합니다.</string> -->
+  <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
+    <item quantity="other">최대 %1$d까지 선택 가능합니다.</item>
+  </plurals>
   <string name="error_under_quality">화질이 너무 낮습니다.</string>
   <string name="error_over_quality">화질이 너무 높습니다.</string>
   <string name="error_file_type">지원되지 않는 파일 유형입니다.</string>

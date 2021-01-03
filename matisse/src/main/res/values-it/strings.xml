@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="album_name_all">Tutti i media</string>
 
     <string name="button_preview">Anteprima</string>
@@ -26,7 +26,11 @@
     <string name="button_ok">OK</string>
 
     <string name="error_over_count_default">Hai selezionato il numero massimo di elementi</string>
-    <string name="error_over_count">Puoi selezionare fino a %1$d elementi</string>
+    <!-- <string name="error_over_count">Puoi selezionare fino a %1$d elementi</string> -->
+    <plurals name="error_over_count" tools:ignore="MissingDefaultResource">
+      <item quantity="one">Puoi selezionare fino a %1$d elementi</item>
+      <item quantity="other">Puoi selezionare fino a %1$d elementi</item>
+    </plurals>
     <string name="error_under_quality">Sotto qualità</string>
     <string name="error_over_quality">Sopra qualità</string>
     <string name="error_file_type">Tipo di file non supportato</string>

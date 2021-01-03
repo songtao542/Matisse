@@ -178,17 +178,24 @@ public class SelectedItemCollection {
                         maxSelectable
                 );
             } catch (Resources.NotFoundException e) {
-                cause = mContext.getString(
+                // modify by songtao --start--
+                // 删除了 string error_over_count, 全部采用 plurals 格式
+                /*cause = mContext.getString(
                         R.string.error_over_count,
                         maxSelectable
-                );
+                );*/
+                cause = "";
+                // modify by songtao --end--
             } catch (NoClassDefFoundError e) {
-                cause = mContext.getString(
+                // modify by songtao --start--
+                // 删除了 string error_over_count, 全部采用 plurals 格式
+                /*cause = mContext.getString(
                         R.string.error_over_count,
                         maxSelectable
-                );
+                );*/
+                cause = "";
+                // modify by songtao --end--
             }
-
             return new IncapableCause(cause);
         } else if (typeConflict(item)) {
             return new IncapableCause(mContext.getString(R.string.error_type_conflict));
